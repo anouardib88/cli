@@ -107,26 +107,10 @@ func (a AssignedActors) Logins() []string {
 
 // DisplayNames returns a list of display names for the assigned actors.
 func (a AssignedActors) DisplayNames() []string {
-	// These display names are used for populating the "default" assigned actors
-	// from the AssignedActors type. But, this is only one piece of the puzzle
-	// as later, other queries will fetch the full list of possible assignable
-	// actors from the repository, and the two lists will be reconciled.
-	//
-	// It's important that the display names are the same between the defaults
-	// (the values returned here) and the full list (the values returned by
-	// other repository queries). Any discrepancy would result in an
-	// "invalid default", which means an assigned actor will not be matched
-	// to an assignable actor and not presented as a "default" selection.
-	// Not being presented as a default would cause the actor to be potentially
-	// unassigned if the edits were submitted.
-	//
-	// To prevent this, we need shared logic to look up an actor's display name.
-	// However, our API types between assignedActors and the full list of
-	// assignableActors are different. So, as an attempt to maintain
-	// consistency we convert the assignedActors to the same types as the
-	// repository's assignableActors, treating the assignableActors DisplayName
-	// methods as the sources of truth.
-	// TODO KW: make this comment less of a wall of text if needed.
+	// Converts assigned actors to use the same DisplayName methods as assignableActors
+	// to ensure consistency when reconciling defaults with the full list of assignable
+	// actors. Mismatched display names would prevent assigned actors from appearing as
+	// defaults, potentially causing unintended unassignments.
 	var displayNames []string
 	for _, a := range a.Nodes {
 		if a.TypeName == "User" {
